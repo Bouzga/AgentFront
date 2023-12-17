@@ -23,7 +23,6 @@ const Crud = () => {
         id: string;
         name: string;
         capacity: number;
-        price: number;
         surface: number;
         roomEquipement: string;
         entertaiment: string;
@@ -34,7 +33,6 @@ let emptyProduct: {
     id: string;
     name: string;
     capacity: number;
-    price: number;
     surface: number;
     roomEquipement: string;
     entertaiment: string;
@@ -43,7 +41,6 @@ let emptyProduct: {
     id: '',
     name: '',
     capacity: 0,
-    price: 0,
     surface: 0,
     roomEquipement: '',
     entertaiment: '',
@@ -63,19 +60,19 @@ const storedToken = localStorage.getItem('token');
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
     const [rooms, setRooms] = useState<Room[]>([]);
-  const [newRoom, setNewRoom] = useState({
-    name: '',
-    capacity: 0,
-    price: '0.00',
-    surface: '0.0',
-    roomEquipement: '',
-    entertaiment: '',
-    other: '',
+  const [newClient, setNewClient] = useState({
+    username: '',
+    firstname:'',
+    lastname:'',
+    age:'',
+    phone:'',
+    email:'',
+    password:'',
   });
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/auth/rooms/all', {
+                const response = await axios.get('http://localhost:8080/api/auth/user/users', {
                     headers: {
                         Authorization: `Bearer ${storedToken}`,                    },
                 });
@@ -88,12 +85,18 @@ const storedToken = localStorage.getItem('token');
         fetchData();
     }, [[storedToken]]);
 
-    const formatCurrency = (value: number) => {
+    const formatCurrency = (value: number | undefined) => {
+        if (value === undefined) {
+            return 'N/A'; // ou toute autre valeur par défaut que vous préférez
+        }
+    
         return value.toLocaleString('en-US', {
             style: 'currency',
             currency: 'USD'
         });
     };
+    
+    
     const actionBodyTemplate = (rowData: any) => {
         return (
             <React.Fragment>
@@ -175,51 +178,8 @@ const storedToken = localStorage.getItem('token');
             </React.Fragment>
         );
     };
-    const capacityBodyTemplate = (rowData: any) => {
-        return (
-            <>
-                <span className="p-column-title">Capacity</span>
-                {rowData.capacity}
-            </>
-        );
-    };
-    
-    const surfaceBodyTemplate = (rowData: any) => {
-        return (
-            <>
-                <span className="p-column-title">Surface</span>
-                {rowData.surface}
-            </>
-        );
-    };
-    
-    const equipementBodyTemplate = (rowData: any) => {
-        return (
-            <>
-                <span className="p-column-title">Equipement</span>
-                {rowData.roomEquipement}
-            </>
-        );
-    };
-    
-    const entertainmentBodyTemplate = (rowData: any) => {
-        return (
-            <>
-                <span className="p-column-title">Entertainment</span>
-                {rowData.entertaiment}
-            </>
-        );
-    };
-    
-    const otherBodyTemplate = (rowData: any) => {
-        return (
-            <>
-                <span className="p-column-title">Other</span>
-                {rowData.other}
-            </>
-        );
-    };
-    
+
+
 
 
     const rightToolbarTemplate = () => {
@@ -231,93 +191,34 @@ const storedToken = localStorage.getItem('token');
         );
     };
 
-    const codeBodyTemplate = (rowData: Demo.Product) => {
-        return (
-            <>
-                <span className="p-column-title">Code</span>
-                {rowData.code}
-            </>
-        );
-    };
-
-    const nameBodyTemplate = (rowData: Demo.Product) => {
-        return (
-            <>
-                <span className="p-column-title">Name</span>
-                {rowData.name}
-            </>
-        );
-    };
-
-    const imageBodyTemplate = (rowData: Demo.Product) => {
-        return (
-            <>
-                <span className="p-column-title">Image</span>
-                <img src={`/demo/images/product/${rowData.image}`} alt={rowData.image} className="shadow-2" width="100" />
-            </>
-        );
-    };
-
-    const priceBodyTemplate = (rowData: Demo.Product) => {
-        return (
-            <>
-                <span className="p-column-title">Price</span>
-                {formatCurrency(rowData.price as number)}
-            </>
-        );
-    };
-
-    const categoryBodyTemplate = (rowData: Demo.Product) => {
-        return (
-            <>
-                <span className="p-column-title">Category</span>
-                {rowData.category}
-            </>
-        );
-    };
-
-    const ratingBodyTemplate = (rowData: Demo.Product) => {
-        return (
-            <>
-                <span className="p-column-title">Reviews</span>
-                <Rating value={rowData.rating} readOnly cancel={false} />
-            </>
-        );
-    };
-
-    const statusBodyTemplate = (rowData: Demo.Product) => {
-        return (
-            <>
-                <span className="p-column-title">Status</span>
-                <span className={`product-badge status-${rowData.inventoryStatus?.toLowerCase()}`}>{rowData.inventoryStatus}</span>
-            </>
-        );
-    };
 
     const addRoom = async () => {
         try {
-          const response = await axios.post(
-            'http://localhost:8080/api/auth/rooms/add',
-            newRoom,
-            {
-              headers: {
-                Authorization: `Bearer ${storedToken}`,
-              },
-            }
-          );
-          setRooms([...rooms, response.data]); 
-          setNewRoom({
-            name: '',
-            capacity: 0,
-            price: '0.00',
-            surface: '0.0',
-            roomEquipement: '',
-            entertaiment: '',
-            other: '',
-          });
-        } catch (error) {
-          console.error('Error adding room:', error);
-        }
+            const response = await axios.post(
+              'http://localhost:8080/api/auth/signup',
+              newClient,
+              {
+                headers: {
+                  Authorization: `Bearer ${storedToken}`,
+                },
+              }
+            );
+            console.log('Server response:', response.data);
+            setRooms([...rooms, response.data]);
+            setNewClient({
+              username: '',
+              firstname: '',
+              lastname: '',
+              age: '',
+              phone: '',
+              email: '',
+              password: '',
+            });
+          } catch (error) {
+            console.error('Error adding client:', error);
+            
+          }
+          
       };
 
     const header = (
@@ -373,23 +274,18 @@ const storedToken = localStorage.getItem('token');
                         header={header}
                         responsiveLayout="scroll"
                     >
-                       <Column field="name" header="Name" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
-<Column field="capacity" header="Capacity" body={capacityBodyTemplate}></Column>
-<Column field="price" header="Price" body={priceBodyTemplate} sortable></Column>
-<Column field="surface" header="Surface" body={surfaceBodyTemplate}></Column>
-<Column field="roomEquipement" header="Equipement" body={equipementBodyTemplate}></Column>
-<Column field="entertaiment" header="Entertainment" body={entertainmentBodyTemplate}></Column>
-<Column field="other" header="Other" body={otherBodyTemplate}></Column>
+             
 <Column header="Actions" body={actionBodyTemplate} style={{ textAlign: 'center', width: '8em' }} />
                     </DataTable>
 
-                    <Dialog visible={productDialog} style={{ width: '450px' }} header="Room Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
+                    <Dialog visible={productDialog} style={{ width: '450px' }} header="Client Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
                         <div className="field">
-                            <label htmlFor="name">Name</label>
+                            <label htmlFor="name">username</label>
                             <InputText
-                                id="name"
-                                value={newRoom.name}
-                                onChange={(e) => setNewRoom({ ...newRoom, name: e.target.value })}
+                                //id="name"
+                                id="username"
+                                value={newClient.username}
+                                onChange={(e) => setNewClient({ ...newClient, username: e.target.value })}
                                 required
                                 autoFocus
                                 className={classNames({
@@ -398,50 +294,100 @@ const storedToken = localStorage.getItem('token');
                             />
                             {submitted && <small className="p-invalid">Name is required.</small>}
                         </div>
-                       
+
                         <div className="field">
-                            <label htmlFor="name">Capacity</label>
+                            <label htmlFor="name">Firstname</label>
                             <InputText
-                                id="name"
-                                type="number"
-                                value={newRoom.capacity.toString()}
-                                onChange={(e) => setNewRoom({ ...newRoom, capacity: parseInt(e.target.value, 10) })}
+                                id="firstname"
+                                value={newClient.firstname}
+                                onChange={(e) => setNewClient({ ...newClient, firstname: e.target.value })}
                                 required
                                 autoFocus
                                 className={classNames({
                                     'p-invalid': submitted 
                                 })}
                             />
-                            {submitted && <small className="p-invalid">Capacity is required.</small>}
+                            {submitted && <small className="p-invalid">Fastname is required.</small>}
                         </div>
-                        <div className="formgrid grid">
-                            <div className="field col">
-                                <label htmlFor="price">Price</label>
-                                <InputText id="price" 
-                                value={newRoom.price}
-                                onChange={(e) => setNewRoom({ ...newRoom, price:e.target.value })}
-                                 />
-                            </div>
-                           
-                        </div>
-                        <div>
-                            {submitted && <small className="p-invalid">Price is required.</small>}
-                        </div>
+
                         <div className="field">
-                            <label htmlFor="description">Room equipement</label>
-                            <InputTextarea id="description"    value={newRoom.roomEquipement}
-                                onChange={(e) => setNewRoom({ ...newRoom, roomEquipement:e.target.value })} required rows={3} cols={20} />
+                            <label htmlFor="name">Lastname</label>
+                            <InputText
+                                id="lastname"
+                                value={newClient.lastname}
+                                onChange={(e) => setNewClient({ ...newClient, lastname: e.target.value })}
+                                required
+                                autoFocus
+                                className={classNames({
+                                    'p-invalid': submitted 
+                                })}
+                            />
+                            {submitted && <small className="p-invalid">Lastname is required.</small>}
                         </div>
+
                         <div className="field">
-                            <label htmlFor="description">entertaiment</label>
-                            <InputTextarea id="description"  value={newRoom.entertaiment}
-                                onChange={(e) => setNewRoom({ ...newRoom, entertaiment:e.target.value })} required rows={3} cols={20} />
+                            <label htmlFor="name">Age</label>
+                            <InputText
+                                id="age"
+                                value={newClient.age}
+                                onChange={(e) => setNewClient({ ...newClient, age: e.target.value })}
+                                required
+                                autoFocus
+                                className={classNames({
+                                    'p-invalid': submitted 
+                                })}
+                            />
+                            {submitted && <small className="p-invalid">Age is required.</small>}
                         </div>
+
+
                         <div className="field">
-                            <label htmlFor="description">Other</label>
-                            <InputTextarea id="description"  value={newRoom.other}
-                                onChange={(e) => setNewRoom({ ...newRoom, other:e.target.value })} required rows={3} cols={20} />
+                            <label htmlFor="name">Phone</label>
+                            <InputText
+                                id="phone"
+                                value={newClient.age}
+                                onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
+                                required
+                                autoFocus
+                                className={classNames({
+                                    'p-invalid': submitted 
+                                })}
+                            />
+                            {submitted && <small className="p-invalid">Phone is required.</small>}
                         </div>
+
+                        <div className="field">
+                            <label htmlFor="name">Email</label>
+                            <InputText
+                                id="email"
+                                value={newClient.email}
+                                onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+                                required
+                                autoFocus
+                                className={classNames({
+                                    'p-invalid': submitted 
+                                })}
+                            />
+                            {submitted && <small className="p-invalid">Email is required.</small>}
+                        </div>
+
+
+                        <div className="field">
+                            <label htmlFor="name">Password</label>
+                            <InputText
+                                id="password"
+                                value={newClient.password}
+                                onChange={(e) => setNewClient({ ...newClient, password: e.target.value })}
+                                required
+                                autoFocus
+                                className={classNames({
+                                    'p-invalid': submitted 
+                                })}
+                            />
+                            {submitted && <small className="p-invalid">Password is required.</small>}
+                        </div>
+                       
+                   
 
                         
                     </Dialog>

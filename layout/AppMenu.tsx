@@ -27,7 +27,7 @@ const AppMenu = () => {
                     to: '/auth/login'
                 },
                 {
-                    label: 'Our Rooms',
+                    label: 'Our Clients',
                     icon: 'pi pi-fw pi-building',
                     to: '/pages/crud'
                 },
