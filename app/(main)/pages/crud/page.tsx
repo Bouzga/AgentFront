@@ -19,7 +19,7 @@ import { Demo } from '../../../../types/types';
 import axios from 'axios';
 const Crud = () => {
 
-    interface Room {
+    interface Client {
         id: string;
         name: string;
         capacity: number;
@@ -59,7 +59,7 @@ const storedToken = localStorage.getItem('token');
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
-    const [rooms, setRooms] = useState<Room[]>([]);
+    const [clients, setClients] = useState<Client[]>([]);
   const [newClient, setNewClient] = useState({
     username: '',
     firstname:'',
@@ -78,7 +78,7 @@ const storedToken = localStorage.getItem('token');
                 });
                 setProducts(response.data);
             } catch (error) {
-                console.error('Error fetching rooms:', error);
+                console.error('Error fetching clients:', error);
             }
         };
     
@@ -192,7 +192,7 @@ const storedToken = localStorage.getItem('token');
     };
 
 
-    const addRoom = async () => {
+    const addClient = async () => {
         try {
             const response = await axios.post(
               'http://localhost:8080/api/auth/signup',
@@ -204,7 +204,7 @@ const storedToken = localStorage.getItem('token');
               }
             );
             console.log('Server response:', response.data);
-            setRooms([...rooms, response.data]);
+            setClients([...clients, response.data]);
             setNewClient({
               username: '',
               firstname: '',
@@ -234,7 +234,7 @@ const storedToken = localStorage.getItem('token');
     const productDialogFooter = (
         <>
             <Button label="Cancel" icon="pi pi-times" text onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" text  onClick={addRoom} />
+            <Button label="Save" icon="pi pi-check" text  onClick={addClient} />
         </>
     );
     const deleteProductDialogFooter = (
@@ -324,37 +324,36 @@ const storedToken = localStorage.getItem('token');
                             />
                             {submitted && <small className="p-invalid">Lastname is required.</small>}
                         </div>
-
                         <div className="field">
-                            <label htmlFor="name">Age</label>
-                            <InputText
-                                id="age"
-                                value={newClient.age}
-                                onChange={(e) => setNewClient({ ...newClient, age: e.target.value })}
-                                required
-                                autoFocus
-                                className={classNames({
-                                    'p-invalid': submitted 
-                                })}
-                            />
-                            {submitted && <small className="p-invalid">Age is required.</small>}
-                        </div>
+    <label htmlFor="age">Age</label>
+    <InputText
+        id="age"
+        value={newClient.age}
+        onChange={(e) => setNewClient({ ...newClient, age: e.target.value })}
+        required
+        autoFocus
+        className={classNames({
+            'p-invalid': submitted 
+        })}
+    />
+    {submitted && <small className="p-invalid">age is required.</small>}
+</div>
 
+<div className="field">
+    <label htmlFor="phone">Phone</label>
+    <InputText
+        id="phone"
+        value={newClient.phone}
+        onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
+        required
+        autoFocus
+        className={classNames({
+            'p-invalid': submitted 
+        })}
+    />
+    {submitted && <small className="p-invalid">phone is required.</small>}
+</div>
 
-                        <div className="field">
-                            <label htmlFor="name">Phone</label>
-                            <InputText
-                                id="phone"
-                                value={newClient.age}
-                                onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
-                                required
-                                autoFocus
-                                className={classNames({
-                                    'p-invalid': submitted 
-                                })}
-                            />
-                            {submitted && <small className="p-invalid">Phone is required.</small>}
-                        </div>
 
                         <div className="field">
                             <label htmlFor="name">Email</label>
